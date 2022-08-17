@@ -42,10 +42,26 @@ export default function Table() {
         },
     ]
 
-    const [ data , setData ] = useState(arr);
 
-    const del = (index) => {
-        setData(data.filter( f => f.taskId !== index ));
+    const [ data , setData ] = useState(arr);
+ 
+    const del = (item) => {
+        const findItem = data.find( f => f.taskId === item.taskId );
+        const delItem = data.filter( f => f.parentId !== findItem.taskId );
+        setData(delItem.filter( f => f !== findItem ));
+    }
+
+    const up = (item) => {
+        const findItem = data.find( f => f.taskId === item.taskId );
+        const parentId = findItem.parentId;
+        const parentStatus = data.find( f => f.taskId === parentId );
+        if(parentStatus){
+          findItem.taskStatus++;
+          parentStatus.taskStatus++;
+        } else {
+          findItem.taskStatus++;
+        }
+        setData([...data]);
     }
 
   return (
@@ -66,8 +82,8 @@ export default function Table() {
             <td>{data.taskName}</td>
             <td>{data.taskStatus}</td>
             <td>
-                <button type="button" class="btn btn-danger me-2" onClick={ () => del(data.taskId) }>Del</button>
-                <button type="button" class="btn btn-success">Start</button>
+                <button type="button" className="btn btn-danger me-2" onClick={ () => del(data) }>Del</button>
+                <button type="button" className="btn btn-success" onClick={ () => up(data) }>Start</button>
             </td>
           </tr>
         ))}
@@ -75,3 +91,4 @@ export default function Table() {
     </table>
   );
 }
+
